@@ -1,0 +1,85 @@
+services:
+  # Main Laravel Service (Apache-based, single container style)
+  # Application code is now isolated in the /src directory
+  laravel:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: laravel_app
+    restart: always
+    volumes:
+      - ./src:/var/www/html/src
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+  # Database Service
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: always
+    command: '--authentication_policy=mysql_native_password'
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: password
+    expose:
+      - 3306
+    ports:
+      - "3307:3306" # Mapped to 3307 on host to avoid 3306 conflicts
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel
+
+  # PHPMyAdmin
+  phpmyadmin:
+    image: arm64v8/phpmyadmin
+    container_name: laravel_phpmyadmin
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+  # Utility Services (WordPress style)
+  # These now also run from the /src directory
+  artisan:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: laravel_artisan
+    volumes:
+      - ./src:/var/www/html/src
+    depends_on:
+      - db
+    entrypoint: ["php", "artisan"]
+    networks:
+      - laravel
+
+  composer:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: laravel_composer
+    volumes:
+      - ./src:/var/www/html/src
+    entrypoint: ["composer"]
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge
+
+volumes:
+  db_data:
