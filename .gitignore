@@ -44,3 +44,7 @@ yarn-error.log
 .fusebox/
 .next/
 out/
+
+# Laravel Boost & AI Agents
+src/boost.json
+src/.gemini/
