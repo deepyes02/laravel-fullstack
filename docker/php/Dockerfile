@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -32,19 +32,8 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Pre-cache Laravel installation into /usr/src/laravel
-# Keep this as /usr/src/laravel to be copied into the final src/ folder
-RUN composer create-project laravel/laravel /usr/src/laravel
-
-# Copy the entrypoint script
-COPY docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-RUN chmod +x /usr/local/bin/docker-entrypoint
-
 # Set the working directory directly to the src/ folder
 WORKDIR /var/www/html/src
-
-# Define the custom entrypoint
-ENTRYPOINT ["docker-entrypoint"]
 
 # Expose port 80 and start Apache server
 EXPOSE 80
