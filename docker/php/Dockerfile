@@ -12,7 +12,12 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libjpeg-dev \
     libfreetype6-dev \
-    libicu-dev
+    libicu-dev \
+    tzdata
+
+# Set the timezone
+ENV TZ=Asia/Tokyo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
