@@ -16,7 +16,11 @@
 </head>
 
 <body>
-    <h1>Hello World</h1>
+    @if ($name && $age)
+        <h1>Hello {{ $name }}, thanks for telling me you are {{ $age }} years old</h1>
+    @else
+        <h1>Hello user, please send name and age in query params, eg. localhost/?name=DW&age=11</h1>
+    @endif
 </body>
 
 </html>
