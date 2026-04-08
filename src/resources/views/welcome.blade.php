@@ -12,7 +12,7 @@
     <link href="https://fonts.bunny.net/css?family=lexend-deca:400,500,600" rel="stylesheet" />
 
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.ts'])
 </head>
 
 <body>
